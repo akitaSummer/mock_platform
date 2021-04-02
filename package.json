@@ -1,0 +1,22 @@
+{
+    "name": "mock_platform",
+    "version": "0.0.1",
+    "main": "index.js",
+    "license": "MIT",
+    "scripts": {
+        "dev": "concurrently \"tsc --watch\" \"nodemon dist/index.js\""
+    },
+    "dependencies": {
+        "@typegoose/typegoose": "^7.6.0",
+        "@types/express": "^4.17.11",
+        "@types/knex": "^0.16.1",
+        "@types/mongoose": "^5.10.4",
+        "concurrently": "^6.0.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "mongoose": "5.10.0",
+        "mysql": "^2.18.1",
+        "nodemon": "^2.0.7",
+        "typescript": "^4.2.3"
+    }
+}
