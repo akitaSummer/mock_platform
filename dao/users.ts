@@ -1,6 +1,6 @@
 import { prop, getModelForClass } from "@typegoose/typegoose";
 
-class User {
+export class User {
   @prop({ required: true })
   public name!: string;
 
@@ -21,9 +21,13 @@ class User {
 
 const UserModel = getModelForClass(User);
 
+export const findUserById = async (id: string) => {
+  return await UserModel.findById({ _id: id });
+};
+
 export const findUserByName = async (name: string) => {
-    return await UserModel.find({ name })
-}
+  return await UserModel.findOne({ name });
+};
 
 export const createUser = async (name: string, password: string) => {
   return await UserModel.create({ name, password, deleted: 0 });
