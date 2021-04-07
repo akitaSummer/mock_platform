@@ -9,6 +9,7 @@ import { User } from "../dao/users";
 import { RespType } from "./resp";
 
 export * from "./resp";
+export * from "./error";
 
 export interface Request extends _Request {
   user: DocumentType<User>;

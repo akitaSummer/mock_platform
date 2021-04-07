@@ -9,6 +9,7 @@ export enum StatusCode {
   ServiceError = 7,
   NotLogin = 8,
   PasswordFailed = 9,
+  FileTypeError = 10,
 }
 
 export type RespType = {
