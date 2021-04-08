@@ -10,6 +10,7 @@ import { RespType } from "./resp";
 
 export * from "./resp";
 export * from "./error";
+export * from "./task";
 
 export interface Request extends _Request {
   user: DocumentType<User>;

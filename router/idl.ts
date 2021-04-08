@@ -1,12 +1,11 @@
 import { Router } from "express";
 import { resolve } from "path";
+import { mkdirSync } from "fs";
+import { rmdir } from "fs/promises";
 import multer from "multer";
-import {
-  findIdlByUserIdAndProjectName,
-  updateIdl,
-  createIdl,
-} from "../dao/idls";
 
+import { findIdlByUserIdAndProjectName, updateIdl } from "../dao/idls";
+import { createTasks } from "../dao/tasks";
 import {
   Request,
   Response,
@@ -14,12 +13,20 @@ import {
   RespError,
   handleError,
 } from "../types";
+import { taskTimeOutMap } from "../utils";
 
 const idlRouter = Router();
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, resolve(__dirname, "../public/idls/"));
+  destination: function (req: Request & { fileTempPath: string }, file, cb) {
+    // 设定临时文件夹，待解压构建完成后存放至/public/idls/文件夹下
+    const tempDir = Date.now().toString();
+    const path = resolve(__dirname, `../public/idls/temp/${tempDir}`);
+    mkdirSync(path, {
+      recursive: true,
+    });
+    req.fileTempPath = tempDir;
+    cb(null, path);
   },
   filename: function (req: Request, file, cb) {
     console.log(file);
@@ -47,7 +54,10 @@ const upload = multer({
 idlRouter.post(
   "/create/:project",
   upload.single("file"),
-  async (req: Request & { file: Express.Multer.File }, res: Response) => {
+  async (
+    req: Request & { file: Express.Multer.File; fileTempPath: string },
+    res: Response
+  ) => {
     try {
       const { file, user, params } = req;
       if (!file.originalname)
@@ -63,7 +73,21 @@ idlRouter.post(
       const newIdl = await updateIdl(user._id, project, file.filename);
 
       if (!newIdl)
-        throw new RespError(StatusCode.UpdateFailed, "update idl failed");
+        throw new RespError(StatusCode.CreateFailed, "create idl failed");
+
+      const result = await createTasks(
+        req.fileTempPath,
+        user.name,
+        user._id,
+        project,
+        file.filename,
+        req.fileTempPath
+      );
+
+      if (!result)
+        throw new RespError(StatusCode.CreateFailed, "create idl task failed");
+
+      taskTimeOutMap.set(req.fileTempPath, result);
 
       res.send({
         data: {
@@ -71,12 +95,14 @@ idlRouter.post(
           StatusMessage: "create success",
           data: {
             file,
-            url: `http://localhost:4000/public/idls/${file.filename}`,
+            wsKey: req.fileTempPath,
           },
         },
       });
     } catch (e) {
       handleError(e, res);
+      // 出现错误删除临时文件夹
+      rmdir(req.fileTempPath);
     }
   }
 );
@@ -84,7 +110,10 @@ idlRouter.post(
 idlRouter.post(
   "/upload/:project",
   upload.single("file"),
-  async (req: Request & { file: Express.Multer.File }, res: Response) => {
+  async (
+    req: Request & { file: Express.Multer.File; fileTempPath: string },
+    res: Response
+  ) => {
     try {
       const { file, user, params } = req;
       if (!file.originalname)
@@ -103,18 +132,33 @@ idlRouter.post(
       if (!newIdl)
         throw new RespError(StatusCode.UpdateFailed, "update idl failed");
 
+      const result = await createTasks(
+        req.fileTempPath,
+        user.name,
+        user._id,
+        project,
+        file.filename,
+        req.fileTempPath
+      );
+
+      if (!result)
+        throw new RespError(StatusCode.CreateFailed, "create idl task failed");
+
+      taskTimeOutMap.set(req.fileTempPath, result);
+
       res.send({
         data: {
           StatusCode: StatusCode.Success,
           StatusMessage: "upload success",
           data: {
             file,
-            url: `http://localhost:4000/public/idls/${file.filename}`,
+            wsKey: req.fileTempPath,
           },
         },
       });
     } catch (e) {
       handleError(e, res);
+      rmdir(req.fileTempPath);
     }
   }
 );
