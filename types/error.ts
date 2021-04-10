@@ -1,5 +1,4 @@
-import { StatusCode } from "./resp";
-import { Response } from "./index";
+import { Response, IdlUploadTaskStatusCode, StatusCode } from "./";
 
 export class RespError extends Error {
   public code: StatusCode;
@@ -32,4 +31,17 @@ export const handleError = (e: Error, res: Response) => {
       StatusMessage: "service error",
     },
   });
+};
+
+export class HError extends Error {
+  public code: IdlUploadTaskStatusCode;
+
+  constructor(message: string, code: IdlUploadTaskStatusCode) {
+    super(message);
+    this.code = code;
+  }
+}
+
+export const isHError = (e: any) => {
+  return e && e.code;
 };

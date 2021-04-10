@@ -23,6 +23,11 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
+"@creditkarma/thrift-parser@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.npm.taobao.org/@creditkarma/thrift-parser/download/@creditkarma/thrift-parser-1.2.0.tgz#69b47dff3d2a5211e9417ff543ea65f681821906"
+  integrity sha1-abR9/z0qUhHpQX/1Q+pl9oGCGQY=
+
 "@mapbox/node-pre-gyp@^1.0.0":
   version "1.0.3"
   resolved "https://registry.npm.taobao.org/@mapbox/node-pre-gyp/download/@mapbox/node-pre-gyp-1.0.3.tgz#c740c23ec1007b9278d4c28f767b6e843a88c3d3"

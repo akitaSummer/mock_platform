@@ -11,6 +11,7 @@ import { RespType } from "./resp";
 export * from "./resp";
 export * from "./error";
 export * from "./task";
+export * from "./compiler";
 
 export interface Request extends _Request {
   user: DocumentType<User>;
