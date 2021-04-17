@@ -28,3 +28,24 @@ export type MiddleFunction = (
   res: Response,
   next: NextFunction
 ) => any;
+
+export enum AccessType {
+  Application = 1,
+  Service = 2,
+}
+
+export interface RecentlyAccess {
+  Type: AccessType;
+  Id: string;
+  Name: string;
+}
+
+export interface MethodInfo {
+  method: string;
+  doc: string;
+}
+
+export interface ReturnParam {
+  name: string;
+  children?: ReturnParam[];
+}

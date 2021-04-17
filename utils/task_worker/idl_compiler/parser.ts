@@ -40,7 +40,7 @@ export class Parser {
   private jsonPath: string;
   private idlParser: IdlParser;
 
-  public constructor(gqlPath: string, jsonPath: string, idlPath: string) {
+  constructor(gqlPath: string, jsonPath: string, idlPath: string) {
     this.gqlPath = gqlPath;
     this.jsonPath = jsonPath;
     this.idlParser = new IdlParser(idlPath);
